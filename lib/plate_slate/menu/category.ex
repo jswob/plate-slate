@@ -5,7 +5,7 @@ defmodule PlateSlate.Menu.Category do
 
   schema "categories" do
     field :description, :string
-    field :name, :string, null: false
+    field :name, :string
 
     has_many :items, PlateSlate.Menu.Item
 
