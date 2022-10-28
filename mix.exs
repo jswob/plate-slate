@@ -7,7 +7,7 @@ defmodule PlateSlate.MixProject do
       version: "0.1.0",
       elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:gettext] ++ Mix.compilers(),
+      compilers: [] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -50,6 +50,9 @@ defmodule PlateSlate.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:absinthe, "~> 1.5"},
+			{:absinthe_phoenix, "~> 2.0"},
+			{:absinthe_plug, "~> 1.5"},
+			{:absinthe_relay, "~> 1.5"},
     ]
   end
 
