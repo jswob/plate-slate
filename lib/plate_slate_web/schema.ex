@@ -52,8 +52,11 @@ defmodule PlateSlateWeb.Schema do
 		@desc "Priced below a value"
 		field :priced_below, :float
 
-		field :added_before, :date
+		@desc "Added after a date"
 		field :added_after, :date
+
+		@desc "Added before a date"
+		field :added_before, :date
 	end
 
 	scalar :date do
