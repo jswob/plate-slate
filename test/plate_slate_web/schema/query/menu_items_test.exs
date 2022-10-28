@@ -6,15 +6,18 @@ defmodule PlateSlateWeb.Schema.Query.MenuItemsTest do
 	end
 
 	@query """
-		{
-			menuItems {
+		query GetMenuItems($filter: MenuItemFilter!) {
+			menuItems(filter: $filter) {
 				name
 			}
 		}
 	"""
+	@variables %{
+		"filter" => %{},
+	}
 	test "menuItems field returns menu items" do
 		conn = build_conn()
-		conn = get conn, "/api", query: @query
+		conn = get conn, "/api", query: @query, variables: @variables
 		assert json_response(conn, 200) == %{
 			"data" => %{
 				"menuItems" => [
@@ -39,7 +42,7 @@ defmodule PlateSlateWeb.Schema.Query.MenuItemsTest do
 
 	@query """
 		{
-			menuItems(matching: "reu") {
+			menuItems(filter: {name: "reu"}) {
 				name
 			}
 		}
@@ -57,7 +60,7 @@ defmodule PlateSlateWeb.Schema.Query.MenuItemsTest do
 
 	@query """
 		{
-			menuItems(matching: 1234) {
+			menuItems(filter: {name: 123}) {
 				name
 			}
 		}
@@ -67,17 +70,17 @@ defmodule PlateSlateWeb.Schema.Query.MenuItemsTest do
 		assert %{"errors" => [
 			%{"message" => message}
 		]} = json_response(response, 200)
-		assert message == "Argument \"matching\" has invalid value 1234."
+		assert message == "Argument \"filter\" has invalid value {name: 123}.\nIn field \"name\": Expected type \"String\", found 123."
 	end
 
 	@query """
-		query GetMenuItems($term: String) {
-			menuItems(matching: $term) {
+		query GetMenuItems($filter: MenuItemFilter!) {
+			menuItems(filter: $filter) {
 				name
 			}
 		}
 	"""
-	@variables %{"term" => "reu"}
+	@variables %{"filter" => %{"name" => "reu"}}
 	test "menuItems field filters by name when using a variable" do
 		response = get(build_conn(), "/api", query: @query, variables: @variables)
 		assert json_response(response, 200) == %{
@@ -90,18 +93,42 @@ defmodule PlateSlateWeb.Schema.Query.MenuItemsTest do
 	end
 
 	@query """
-		{
-			menuItems(order: DESC) {
+		query GetMenuItems($filter: MenuItemFilter!, $order: SortOrder!) {
+			menuItems(filter: $filter, order: $order) {
 				name
 			}
 		}
 	"""
+	@variables %{
+		"filter" => %{},
+		"order" => "DESC"
+	}
 	test "menuItems field returns items descending using literals" do
-		response = get(build_conn(), "/api", query: @query)
+		response = get(build_conn(), "/api", query: @query, variables: @variables)
 		assert %{
 			"data" => %{
 				"menuItems" => [%{"name" => "Water"} | _]
 			}
 		} = json_response(response, 200)
+	end
+
+	@query """
+		query GetMenuItems($filter: MenuItemFilter!){
+			menuItems(filter: $filter) {
+				name
+			}
+		}
+	"""
+	@variables %{
+		"filter" => %{
+			"category" => "Sandwiches",
+			"tag" => "Vegetarian",
+		}
+	}
+	test "test" do
+		response = get(build_conn(), "/api", query: @query, variables: @variables)
+		assert %{
+			"data" => %{"menuItems" => [%{"name" => "Vada Pav"}]}
+		} == json_response(response, 200)
 	end
 end
