@@ -6,6 +6,8 @@ defmodule PlateSlateWeb.Schema do
 	alias PlateSlate.{Menu, Repo}
 	alias PlateSlateWeb.Resolvers
 
+	import_types __MODULE__.MenuTypes
+
 	enum :sort_order do
 		value :asc
 		value :desc
@@ -19,71 +21,36 @@ defmodule PlateSlateWeb.Schema do
 			resolve &Resolvers.Menu.menu_items/3
 		end
 
+		@desc "The list of categories of items on a menu"
 		field :categories, list_of(:category) do
 			arg :matching, :string
 			arg :order, :sort_order, default_value: :asc
 			resolve &Resolvers.Menu.categories/3
 		end
-	end
 
-	@desc "The item on a menu."
-	object :menu_item do
-		@desc "The unique identifier of item."
-		field :id, :id
-
-		@desc "The name (label) of the item."
-		field :name, :string
-
-		@desc "The description (ingredients, weight, etc.) of item."
-		field :description, :string
-
-		@desc "The date item has been added on"
-		field :added_on, :date
-	end
-
-	@desc "Filtering options for the menu item list"
-	input_object :menu_item_filter do
-		@desc "Matching a name"
-		field :name, :string
-
-		@desc "Matching a category name"
-		field :category, :string
-
-		@desc "Matching a tag"
-		field :tag, :string
-
-		@desc "Priced above a value"
-		field :priced_above, :float
-
-		@desc "Priced below a value"
-		field :priced_below, :float
-
-		@desc "Added after a date"
-		field :added_after, :date
-
-		@desc "Added before a date"
-		field :added_before, :date
-	end
-
-	object :category do
-		@desc "The name of the category"
-		field :name, :string
-
-		@desc "The description of a category"
-		field :description, :string
+		@desc """
+		The list of categories and menu items that has name
+		or description matching passed term.
+		"""
+		field :search, list_of(:search_result) do
+			arg :matching, non_null :string
+			resolve &Resolvers.Menu.search/3
+		end
 	end
 
 	@desc "The custom scalar type for emails"
 	scalar :email do
 		parse fn email ->
-			cond String.split(email, "@") do
+			case String.split(email, "@") do
 				[username, domain] -> {username, domain}
 
 				_ -> throw "Email \"#{email}\" is not valid."
 			end
+		end
 
 		serialize fn {username, domain} ->
 			"#{username}@#{domain}"
+		end
 	end
 
 	@desc "The custom scalar type for dates in format \"yyyy-mm-dd\""
