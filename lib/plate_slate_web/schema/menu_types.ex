@@ -6,8 +6,8 @@ defmodule PlateSlateWeb.Schema.MenuTypes do
 	@desc """
 	The category or menu item.
 	"""
-	union :search_result do
-		types [:menu_item, :category]
+	interface :search_result do
+		field :name, :string
 		resolve_type fn
 			%PlateSlate.Menu.Item{}, _ ->
 				:menu_item
@@ -44,6 +44,8 @@ defmodule PlateSlateWeb.Schema.MenuTypes do
 
 	@desc "The item on a menu."
 	object :menu_item do
+		interfaces [:search_result]
+
 		@desc "The unique identifier of item."
 		field :id, :id
 
@@ -59,6 +61,8 @@ defmodule PlateSlateWeb.Schema.MenuTypes do
 
 	@desc "The category of an item on a menu."
 	object :category do
+		interfaces [:search_result]
+
 		@desc "The name of the category"
 		field :name, :string
 
