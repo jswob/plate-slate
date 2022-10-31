@@ -73,6 +73,19 @@ defmodule PlateSlateWeb.Schema do
 		field :description, :string
 	end
 
+	@desc "The custom scalar type for emails"
+	scalar :email do
+		parse fn email ->
+			cond String.split(email, "@") do
+				[username, domain] -> {username, domain}
+
+				_ -> throw "Email \"#{email}\" is not valid."
+			end
+
+		serialize fn {username, domain} ->
+			"#{username}@#{domain}"
+	end
+
 	@desc "The custom scalar type for dates in format \"yyyy-mm-dd\""
 	scalar :date do
 		parse fn input ->
