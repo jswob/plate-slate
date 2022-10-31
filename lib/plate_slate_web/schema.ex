@@ -66,10 +66,14 @@ defmodule PlateSlateWeb.Schema do
 	end
 
 	object :category do
+		@desc "The name of the category"
 		field :name, :string
+
+		@desc "The description of a category"
 		field :description, :string
 	end
 
+	@desc "The custom scalar type for dates in format \"yyyy-mm-dd\""
 	scalar :date do
 		parse fn input ->
 			with %Absinthe.Blueprint.Input.String{value: value} <- input,
