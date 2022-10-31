@@ -17,19 +17,6 @@ defmodule PlateSlate.Menu do
   alias PlateSlate.Menu.Category
 
   @doc """
-  Returns the list of categories.
-
-  ## Examples
-
-      iex> list_categories()
-      [%Category{}, ...]
-
-  """
-  def list_categories do
-    Repo.all(Category)
-  end
-
-  @doc """
   Gets a single category.
 
   Raises `Ecto.NoResultsError` if the Category does not exist.
@@ -206,8 +193,18 @@ defmodule PlateSlate.Menu do
     Item.changeset(item, %{})
   end
 
+	def list_categories(filters) do
+		filters
+	  |> Enum.reduce(Category, fn
+			{:order, order}, query ->
+				query |> order_by({^order, :name})
+			{:matching, name}, query ->
+				from q in query, where: ilike(q.name, ^"%#{name}%")
+		end)
+		|> Repo.all()
+	end
+
 	def list_items(filters) do
-		dbg(filters)
 		filters
 		|> Enum.reduce(Item, fn
 				{:order, order}, query ->

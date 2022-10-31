@@ -18,6 +18,12 @@ defmodule PlateSlateWeb.Schema do
 			arg :order, :sort_order, default_value: :asc
 			resolve &Resolvers.Menu.menu_items/3
 		end
+
+		field :categories, list_of(:category) do
+			arg :matching, :string
+			arg :order, :sort_order, default_value: :asc
+			resolve &Resolvers.Menu.categories/3
+		end
 	end
 
 	@desc "The item on a menu."
@@ -57,6 +63,11 @@ defmodule PlateSlateWeb.Schema do
 
 		@desc "Added before a date"
 		field :added_before, :date
+	end
+
+	object :category do
+		field :name, :string
+		field :description, :string
 	end
 
 	scalar :date do
