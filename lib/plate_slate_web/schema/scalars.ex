@@ -1,6 +1,18 @@
 defmodule PlateSlateWeb.Schema.Scalars do
 	use Absinthe.Schema.Notation
 
+	@desc "The custom scalar type for decimals"
+	scalar :decimal do
+		parse fn
+			%{value: value}, _ ->
+				{decimal, _} = Decimal.parse(value)
+				{:ok, decimal}
+			 _, _ -> :error
+		end
+
+		serialize &to_string/1
+	end
+
 	@desc "The custom scalar type for emails"
 	scalar :email do
 		parse fn email ->
