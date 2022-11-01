@@ -26,6 +26,19 @@ defmodule PlateSlateWeb.Resolvers.Menu do
     {:ok, Menu.search(term)}
   end
 
+  def update_item(_, %{item_id: item_id, input: input}, _) do
+    case Menu.update_item(item_id, input) do
+			{:error, :not_found} ->
+				{:ok, %{errors: %{key: "item_id", message: "Item not found."}}}
+
+      {:error, changeset} ->
+        {:ok, %{errors: transform_errors(changeset)}}
+
+      {:ok, menu_item} ->
+        {:ok, %{menu_item: menu_item}}
+    end
+  end
+
   def create_item(_, %{input: params}, _) do
     case Menu.create_item(params) do
       {:error, changeset} ->
@@ -45,9 +58,9 @@ defmodule PlateSlateWeb.Resolvers.Menu do
     end)
   end
 
-	defp format_error({msg, opts}) do
-		Enum.reduce(opts, msg, fn {key, value}, acc ->
-			String.replace(acc, "%{#{key}}", to_string(value))
-		end)
-	end
+  defp format_error({msg, opts}) do
+    Enum.reduce(opts, msg, fn {key, value}, acc ->
+      String.replace(acc, "%{#{key}}", to_string(value))
+    end)
+  end
 end

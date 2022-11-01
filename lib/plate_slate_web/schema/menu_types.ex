@@ -100,6 +100,13 @@ defmodule PlateSlateWeb.Schema.MenuTypes do
 		field :category_id, non_null :id
 	end
 
+	input_object :menu_item_update_input do
+		field :name, :string
+		field :description, :string
+		field :price, :decimal
+		field :category_id, :id
+	end
+
   @desc "The category of an item on a menu."
   object :category do
     interfaces([:search_result])

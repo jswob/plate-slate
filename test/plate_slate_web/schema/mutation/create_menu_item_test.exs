@@ -46,12 +46,12 @@ defmodule PlateSlateWeb.Schema.Mutation.CreateMenuTest do
     assert json_response(conn, 200) == %{
              "data" => %{
                "createMenuItem" => %{
-								 "errors" => nil,
-								 "menuItem" => %{
-									 "name" => menu_item["name"],
-									 "description" => menu_item["description"],
-									 "price" => menu_item["price"]
-								 }
+                 "errors" => nil,
+                 "menuItem" => %{
+                   "name" => menu_item["name"],
+                   "description" => menu_item["description"],
+                   "price" => menu_item["price"]
+                 }
                }
              }
            }
@@ -75,14 +75,16 @@ defmodule PlateSlateWeb.Schema.Mutation.CreateMenuTest do
 
     assert json_response(conn, 200) == %{
              "data" => %{
-							 "createMenuItem" => %{
-								 "errors" => [%{
-									"key" => "name",
-									"message" => "has already been taken"
-								 }],
-								 "menuItem" => nil
-							 }
-							},
+               "createMenuItem" => %{
+                 "errors" => [
+                   %{
+                     "key" => "name",
+                     "message" => "has already been taken"
+                   }
+                 ],
+                 "menuItem" => nil
+               }
+             }
            }
   end
 end
