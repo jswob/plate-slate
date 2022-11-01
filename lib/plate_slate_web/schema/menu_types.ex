@@ -83,9 +83,22 @@ defmodule PlateSlateWeb.Schema.MenuTypes do
     @desc "The description (ingredients, weight, etc.) of item."
     field :description, :string
 
+		@desc "The decimal value of price of an item."
+		field :price, :decimal
+
     @desc "The date item has been added on"
     field :added_on, :date
+
+		field :category, :category,
+			do: resolve(&Resolvers.Menu.category_for_item/3)
   end
+
+	input_object :menu_item_input do
+		field :name, non_null :string
+		field :description, :string
+		field :price, non_null :decimal
+		field :category_id, non_null :id
+	end
 
   @desc "The category of an item on a menu."
   object :category do
